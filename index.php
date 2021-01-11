@@ -3,18 +3,19 @@
   <head>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.5.0/css/ol.css" type="text/css">
     <style>
-      * /*{
+      /*{
         margin: 0;
         padding: 0;
       }*/
       .map {
+        margin-left: 370px;
         margin-top: 40px;
         height: 800px;
         width: 80%;
-        /*position: absolute;
+        position: absolute;
         top: 0;
         left: 0;
-        z-index: -9;*/
+        z-index: -9;
       }
     </style>
     <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.5.0/build/ol.js"></script>
@@ -108,6 +109,18 @@ if (isset($_POST['submit-search'])) {
       $result_marker = $connection->query($sql_marker);
       $row_places = $result_places->fetch_array(MYSQLI_BOTH);
       $row_marker = $result_marker->fetch_array(MYSQLI_BOTH);
+
+      $herkunft = "SELECT * FROM apprentices";
+      $ausgabe = $connection->query($herkunft);
+      while($row = $ausgabe->fetch_object()) {
+        ?>
+        <p>
+        <?php echo $row->prename; ?> 
+        <?php echo $row->lastname; ?> 
+        </p>
+        <?php
+      }
+
       echo "
       <script type='text/javascript'>
           add_map_point(" . $row_places[1] . ", " . $row_places[0] . ");
