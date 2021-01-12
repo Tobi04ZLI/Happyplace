@@ -24,19 +24,17 @@
             margin-top: 20px;
         }
 
-        th {
-            border: 1px;
-            border-color: #AAA;
-            border-style: solid;
-            padding: 0.5rem;
-        }
+    button {
+      width: 200px;
+      background-color: #BEBEBE;
+    }
 
-        td {
-            border: 1px;
-            border-color: #AAA;
-            border-style: solid;
-            padding: 0.5rem;
-        }
+    .name {
+      border: white;
+      background-color: #BEBEBE;
+    }
+
+
 
   </style>
   <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.5.0/build/ol.js"></script>
@@ -45,12 +43,14 @@
 
 <body>
   <form action="index.php" method="POST">
-    <input type="text" name="personsearch" value="<?php echo ($_POST["personsearch"]); ?>">
-    <input type="text" name="personsearch-last" value="<?php echo ($_POST["personsearch-last"]); ?>">
+    <input type="text" name="personsearch" placeholder="Vorname" value="<?php echo ($_POST["personsearch"]); ?>">
+    <input type="text" name="personsearch-last" placeholder="Name" value="<?php echo ($_POST["personsearch-last"]); ?>">
     <button type="submit" name="submit-search">
-      suchen
+      search
     </button>
   </form>
+
+  <h2>Mitglieder</h2>
 
   <div id="map" class="map"></div>
   <script type="text/javascript">
@@ -136,13 +136,14 @@
       $ausgabe = $connection->query($herkunft);
       while ($row = $ausgabe->fetch_object()) {
   ?>
+
   <table>
-    <tr>
-        <th>
-          <?php echo $row->prename; ?>
-          <?php echo $row->lastname; ?>
-      </th>
-    </tr>
+    <form action="index.php" method="POST">
+    <button type="submit" name="submit-search">
+    <input class="name" type="text" name="personsearch" value="<?php echo $row->prename; ?>"> 
+    <input class="name" type="text" name="personsearch-last" value="<?php echo $row->lastname; ?>">
+          </button>
+    </form>
   </table>
   <?php
       }
