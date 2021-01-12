@@ -45,17 +45,20 @@
         die("Connection failed: " . $connection->connect_error);
     }
     if(isset($_POST['submit'])){
-    $prename = $_POST['prename'];
+    $prename = $_POST['prename'];    
     $lastname = $_POST['lastname'];
     $location = $_POST['location'];
     $latitude = $_POST['latitude'];
     $longitude = $_POST['longitude'];
-    }
-
+    
     $idcount = "SELECT COUNT(id) as countid FROM apprentices";
     $results = $connection->query($idcount);
     $row = $results->fetch_assoc();
     $id = $row["countid"]+1;
+
+/*ini_set('display_errors', 0);
+ini_set('display_startup_errors', 0);
+error_reporting(-1);*/
 
     if ($prename != "" && $lastname != "" && $location != ""  &&  $latitude != "" && $longitude != ""){
     $placeSQL = "INSERT INTO places (id, name, latitude, longitude) VALUES ($id, '$location', '$latitude', '$longitude');";
@@ -65,6 +68,7 @@
     mysqli_query($connection, $markersSQL);
     mysqli_query($connection, $apprenticesSQL);
     }
+}
 
     ?>
 </body>  
