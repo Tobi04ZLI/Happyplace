@@ -34,17 +34,26 @@
       background-color: #BEBEBE;
     }
 
-
-
   </style>
   <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.5.0/build/ol.js"></script>
   <title>Project Happy Place</title>
 </head>
 
 <body>
+  <?php
+  
+  if (!empty($_POST["personsearch"]) && !empty($_POST["personsearch-last"])) {
+    $searchPrename = $_POST["personsearch"];
+    $searchLastname = $_POST["personsearch-last"];
+  } else {
+    $searchPrename = '';
+    $searchLastname = '';
+  }
+
+  ?>
   <form action="index.php" method="POST">
-    <input type="text" name="personsearch" placeholder="Vorname" value="<?php echo ($_POST["personsearch"]); ?>">
-    <input type="text" name="personsearch-last" placeholder="Name" value="<?php echo ($_POST["personsearch-last"]); ?>">
+    <input type="text" name="personsearch" placeholder="Vorname" value="<?php echo ($searchPrename); ?>">
+    <input type="text" name="personsearch-last" placeholder="Name" value="<?php echo ($searchLastname); ?>">
     <button type="submit" name="submit-search">
       search
     </button>
@@ -109,52 +118,41 @@
   $dbname = "happyplace";
 
   $connection = new mysqli($servername, $user, $password, $dbname);
-
   if ($connection->connect_error) {
     die("Connection failed: " . $connection->connect_error);
   }
-  if (isset($_POST['submit-search'])) {
-    $searchedperson = $_POST['personsearch'];
-    $searchedperson_last = $_POST['personsearch-last'];
-    $sql_full = "SELECT * FROM apprentices WHERE prename='" . $searchedperson . "' AND lastname='$searchedperson_last';";
-    $result_full = $connection->query($sql_full);
-    $sql_appr = "SELECT prename, lastname FROM apprentices WHERE prename='" . $searchedperson . "' AND lastname='$searchedperson_last';";
-    $result_appr = $connection->query($sql_appr);
-    if ($result_full->num_rows > 0) {
-      $row_full = $result_full->fetch_array(MYSQLI_BOTH);
-      $row_appr = $result_appr->fetch_array(MYSQLI_BOTH);
-      $place_id = $row_full[3];
-      $marker_id = $row_full[4];
-      $sql_place = "SELECT latitude, longitude FROM places WHERE id=" . $place_id . ";";
-      $sql_marker = "SELECT color FROM markers WHERE id=" . $marker_id . ";";
-      $result_places = $connection->query($sql_place);
-      $result_marker = $connection->query($sql_marker);
-      $row_places = $result_places->fetch_array(MYSQLI_BOTH);
-      $row_marker = $result_marker->fetch_array(MYSQLI_BOTH);
 
-      $herkunft = "SELECT * FROM apprentices";
-      $ausgabe = $connection->query($herkunft);
-      while ($row = $ausgabe->fetch_object()) {
-  ?>
+  $herkunft = "SELECT * FROM apprentices JOIN places ON apprentices.place_id = places.id JOIN markers ON apprentices.markers_id = markers.id";   
+  
+  if (!empty($_POST["personsearch"]) && !empty($_POST["personsearch-last"])) {
+    $herkunft .= sprintf(" WHERE prename='%s' AND lastname='%s'", $searchPrename, $searchLastname) ;
+  }  
+  
+  $ausgabe = $connection->query($herkunft);
 
-  <table>
-    <form action="index.php" method="POST">
-    <button type="submit" name="submit-search">
-    <input class="name" type="text" name="personsearch" value="<?php echo $row->prename; ?>"> 
-    <input class="name" type="text" name="personsearch-last" value="<?php echo $row->lastname; ?>">
-          </button>
-    </form>
-  </table>
-  <?php
-      }
+  if ($ausgabe->num_rows <= 0) {
+    echo "<p id='result-id' class='result'>0 results</p>";
+  } else {
 
-      echo "
-      <script type='text/javascript'>
-          add_map_point(" . $row_places[1] . ", " . $row_places[0] . ");
-      </script>";;
-    } else {
-      echo "<p id='result-id' class='result'>0 results</p>";
-    }
+        while ($row = $ausgabe->fetch_object()) {
+        ?>
+
+        <table>
+          <form action="index.php" method="POST">
+          <button type="submit" name="submit-search">
+          <input class="name" type="text" name="personsearch" value="<?php echo $row->prename; ?>"> 
+          <input class="name" type="text" name="personsearch-last" value="<?php echo $row->lastname; ?>">
+                </button>
+          </form>
+        </table>
+        <?php
+      
+
+            echo "
+            <script type='text/javascript'>
+                add_map_point(" .$row->longitude. ", " . $row->latitude . ");
+            </script>";;
+        }
   }
   $connection->close();
   ?>
