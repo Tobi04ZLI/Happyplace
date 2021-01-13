@@ -32,6 +32,7 @@
     </form>
 
     <?php
+
     $servername = "localhost";
     $user = "root";
     $password = "";

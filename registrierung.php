@@ -32,7 +32,7 @@
             <input type="text" name="location" placeholder="location"> <br> <br>
             <input type="text" name="latitude" placeholder="latitude"> <br> <br>
             <input type="text" name="longitude" placeholder="longitude">
-            <button class="backtwo" type="submit" name="submit">
+            <button type="submit" name="submit">
                 register
             </button>
         </div>

@@ -65,6 +65,9 @@
 <body>
   <?php
 
+  /*session_start();
+  $_SESSION["logincheck"] = FALSE;*/
+
   if (!empty($_POST["personsearch"]) && !empty($_POST["personsearch-last"])) {
     $searchPrename = $_POST["personsearch"];
     $searchLastname = $_POST["personsearch-last"];
@@ -84,7 +87,7 @@
 
   <button class="register" onclick="location.href='registrierung.php'">register new member</button>
   <button class="back" onclick="location.href='index.php'">back to main page</button> <br>
-  <button class="registertwo" onclick="location.href='login.php'">register new admin</button>
+  <!-- <button class="registertwo" onclick="location.href='login.php'">register new admin</button> -->
   <button class="login" onclick="location.href='anmeldung.php'">log in as admin</button>
 
   <h2>Members</h2>
