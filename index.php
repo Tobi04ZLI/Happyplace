@@ -11,7 +11,7 @@
     .map {
       margin-left: 370px;
       margin-top: 40px;
-      height: 800px;
+      height: 850px;
       width: 80%;
       position: absolute;
       top: 0;
@@ -20,9 +20,9 @@
     }
 
     table {
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
 
     button {
       width: 200px;
@@ -34,6 +34,29 @@
       background-color: #BEBEBE;
     }
 
+    .register {
+      margin-top: 20px;
+      background-color: green;
+      width: 177px;
+    }
+
+    .registertwo {
+      margin-top: 20px;
+      background-color: blue;
+      width: 177px;
+    }
+
+    .back {
+      margin-top: 20px;
+      background-color: red;
+      width: 177px;
+    }
+
+    .login {
+      margin-top: 20px;
+      background-color: yellow;
+      width: 177px;
+    }
   </style>
   <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.5.0/build/ol.js"></script>
   <title>Project Happy Place</title>
@@ -41,7 +64,7 @@
 
 <body>
   <?php
-  
+
   if (!empty($_POST["personsearch"]) && !empty($_POST["personsearch-last"])) {
     $searchPrename = $_POST["personsearch"];
     $searchLastname = $_POST["personsearch-last"];
@@ -52,14 +75,19 @@
 
   ?>
   <form action="index.php" method="POST">
-    <input type="text" name="personsearch" placeholder="Vorname" value="<?php echo ($searchPrename); ?>">
-    <input type="text" name="personsearch-last" placeholder="Name" value="<?php echo ($searchLastname); ?>">
+    <input type="text" name="personsearch" placeholder="prename" value="<?php echo ($searchPrename); ?>">
+    <input type="text" name="personsearch-last" placeholder="lastname" value="<?php echo ($searchLastname); ?>">
     <button type="submit" name="submit-search">
       search
     </button>
   </form>
 
-  <h2>Mitglieder</h2>
+  <button class="register" onclick="location.href='registrierung.php'">register new member</button>
+  <button class="back" onclick="location.href='index.php'">back to main page</button> <br>
+  <button class="registertwo" onclick="location.href='login.php'">register new admin</button>
+  <button class="login" onclick="location.href='anmeldung.php'">log in as admin</button>
+
+  <h2>Members</h2>
 
   <div id="map" class="map"></div>
   <script type="text/javascript">
@@ -122,37 +150,38 @@
     die("Connection failed: " . $connection->connect_error);
   }
 
-  $herkunft = "SELECT * FROM apprentices JOIN places ON apprentices.place_id = places.id JOIN markers ON apprentices.markers_id = markers.id";   
-  
+  $herkunft = "SELECT * FROM apprentices JOIN places ON apprentices.place_id = places.id JOIN markers ON apprentices.markers_id = markers.id";
+
   if (!empty($_POST["personsearch"]) && !empty($_POST["personsearch-last"])) {
-    $herkunft .= sprintf(" WHERE prename='%s' AND lastname='%s'", $searchPrename, $searchLastname) ;
-  }  
-  
+    $herkunft .= sprintf(" WHERE prename='%s' AND lastname='%s'", $searchPrename, $searchLastname);
+  }
+
   $ausgabe = $connection->query($herkunft);
 
   if ($ausgabe->num_rows <= 0) {
     echo "<p id='result-id' class='result'>0 results</p>";
   } else {
 
-        while ($row = $ausgabe->fetch_object()) {
-        ?>
+    while ($row = $ausgabe->fetch_object()) {
+  ?>
 
-        <table>
-          <form action="index.php" method="POST">
+      <table>
+        <form action="index.php" method="POST">
           <button type="submit" name="submit-search">
-          <input class="name" type="text" name="personsearch" value="<?php echo $row->prename; ?>"> 
-          <input class="name" type="text" name="personsearch-last" value="<?php echo $row->lastname; ?>">
-                </button>
-          </form>
-        </table>
-        <?php
-      
+            <input class="name" type="text" name="personsearch" value="<?php echo $row->prename; ?>">
+            <input class="name" type="text" name="personsearch-last" value="<?php echo $row->lastname; ?>">
+          </button>
+        </form>
+      </table>
 
-            echo "
+  <?php
+
+
+      echo "
             <script type='text/javascript'>
-                add_map_point(" .$row->longitude. ", " . $row->latitude . ");
-            </script>";;
-        }
+                add_map_point(" . $row->longitude . ", " . $row->latitude . ");
+            </script>";
+    }
   }
   $connection->close();
   ?>
